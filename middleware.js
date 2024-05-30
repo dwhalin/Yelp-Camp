@@ -10,7 +10,7 @@ module.exports.isLoggedIn = (req, res, next) => {
         return res.redirect('/login');
     }
     next();
-}
+};
 
 
 module.exports.storeReturnTo = (req, res, next) => {
@@ -18,7 +18,7 @@ module.exports.storeReturnTo = (req, res, next) => {
         res.locals.returnTo = req.session.returnTo;
     }
     next();
-}
+};
 
 module.exports.validateCampground = (req, res, next) => {
     const { error } = campgroundSchema.validate(req.body);
@@ -38,7 +38,7 @@ module.exports.isAuthor = async (req, res, next) => {
         return res.redirect(`/campgrounds/${id}`);
     }
     next();
-}
+};
 
 module.exports.validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body);
@@ -58,4 +58,4 @@ module.exports.isReviewAuthor = async (req, res, next) => {
         return res.redirect(`/campgrounds/${id}`);
     }
     next();
-}
+};
