@@ -6,23 +6,20 @@ const catchAsync = require('../utils/catchAsync');
 const { storeReturnTo } = require('../middleware');
 const passport = require('passport');
 
+router.route('/register')
+    .get(users.renderRegister)
+    .post(catchAsync(users.register));
 
-router.get('/register', users.renderRegister);
 
-router.post('/register', catchAsync(users.register));
+router.route('/login')
+.get(users.renderLogin);
 
-router.get('/login', users.renderLogin);
-
-/////////////////////////////////////router.post('/login', users.login);
-router.post('/login', storeReturnTo,
-// passport.authenticate logs the user in and clears req.session
-passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }),
-// Now we can use res.locals.returnTo to redirect the user after login
-(req, res) => {
-    req.flash('success', 'Welcome back!');
-    const redirectUrl = res.locals.returnTo || '/campgrounds'; // update this line to use res.locals.returnTo now
-    res.redirect(redirectUrl);
-});
+router.post('/login', storeReturnTo, passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }),
+    (req, res) => {
+        req.flash('success', 'Welcome back!');
+        const redirectUrl = res.locals.returnTo || '/campgrounds'; // update this line to use res.locals.returnTo now
+        res.redirect(redirectUrl);
+    });
 
 router.get('/logout', users.logout);
 
