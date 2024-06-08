@@ -17,6 +17,8 @@ const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 
+const mongoSanitize = require('express-mongo-sanitize');
+
 
 const localhost = ('127.0.0.1');
 mongoose.connect(`mongodb://${localhost}:27017/yelp-camp`, {
@@ -44,6 +46,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(mongoSanitize({
+    replaceWith: '_'
+}));
 
 
 const sessionConfig = {
@@ -68,6 +73,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+    console.log(req.query);
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
@@ -77,7 +83,7 @@ app.use((req, res, next) => {
 
 
 app.get('/fakeUser', async (req, res) => {
-    const user = new User({email: 'daniel@gmail.com', username: 'daniel123'});
+    const user = new User({ email: 'daniel@gmail.com', username: 'daniel123' });
     const newUser = await User.register(user, 'chicken');
     res.send(newUser);
 })
