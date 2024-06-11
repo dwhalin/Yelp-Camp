@@ -18,13 +18,13 @@ const mongoSanitize = require('express-mongo-sanitize');
 const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
-const port = process.env.PORT || 4000;
+
 
 const MongoStore = require('connect-mongo');
 
-const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
 
-const localhost = ('127.0.0.1');
+//const localhost = ('127.0.0.1');
 //`mongodb://${localhost}:27017/yelp-camp`
 mongoose.connect(dbUrl, {
     //useNewUrlParser: true,
@@ -53,17 +53,19 @@ app.use(mongoSanitize({
     replaceWith: '_'
 }));
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+
 const store = MongoStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
     crypto: {
-        secret: 'thisshouldbeabettersecret!'
+        secret,
     }
 });
 
 const sessionConfig = {
     name: 'session',
-    secret: 'thisshouldbeabettersecret!',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -168,7 +170,7 @@ app.use((err, req, res, next) => {
 });
 
 
-
+const port = process.env.PORT || 4000;
 app.listen(3000, () => {
-    console.log('Serving on port 3000')
+    console.log(`Serving on port ${port}`)
 });
