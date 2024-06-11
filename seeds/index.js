@@ -4,15 +4,9 @@ const mongoose = require('mongoose');
 const cities = require('./cities');
 const { places, descriptors } = require('./seedHelpers');
 const Campground = require('../models/campground');
+const dbUrl = process.env.DB_URL;
 
-
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
-
-    //useNewUrlParser: true,
-    //
-    //useUnifiedTopology: true
-
-});
+mongoose.connect('mongodb+srv://danieljwhalin:kd5N8l2G1NdzISCM@cluster0.wkm7dic.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection:"));
