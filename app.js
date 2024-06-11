@@ -13,22 +13,24 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
-const userRoutes = require('./routes/users')
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
-const helmet = require('helmet');
+const port = process.env.PORT || 4000;
 
-const mongoSanitize = require('express-mongo-sanitize');
+const MongoStore = require('connect-mongo');
 
+const dbUrl = process.env.DB_URL;
 
 const localhost = ('127.0.0.1');
-mongoose.connect(`mongodb://${localhost}:27017/yelp-camp`, {
-
+//`mongodb://${localhost}:27017/yelp-camp`
+mongoose.connect(dbUrl, {
     //useNewUrlParser: true,
     //useCreateIndex: true,
     //useUnifiedTopology: true,
     //useFindAndModify: false
-
 });
 
 const db = mongoose.connection;
@@ -51,6 +53,13 @@ app.use(mongoSanitize({
     replaceWith: '_'
 }));
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret!'
+    }
+});
 
 const sessionConfig = {
     name: 'session',
